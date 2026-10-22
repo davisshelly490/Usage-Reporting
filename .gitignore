@@ -1,0 +1,23 @@
+# Local environments and editor settings
+.venv/
+.vscode/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Local credentials and configuration
+.env
+.env.*
+!.env.example
+.aws/
+.codex/
+.agents/
+
+# Employee-level source exports and generated reports
+*.csv
+*.xlsx
+*.xls
+*.zip
+input/
+output/
+copilot_weekly_charts_oct2026/
