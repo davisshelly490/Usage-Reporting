@@ -21,3 +21,6 @@ __pycache__/
 input/
 output/
 copilot_weekly_charts_oct2026/
+copilot_monthly_charts/
+chatgpt_weekly_charts/
+chatgpt_monthly_charts/

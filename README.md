@@ -39,3 +39,49 @@ The Employee Level Data sheet also has column filters for all five fields. Summa
 Each run also generates `ChatGPT Inactive 4 Weeks`, a worksheet listing currently licensed ChatGPT users with `new_chatgpt_user = 0` and no activity in the four-week (28-day) usage window. It includes qualifying accounts outside the roster. Unknown or post-report account ages are excluded only from this targeted list. Summary filters do not affect this full list.
 
 Dated workbooks are saved locally and in the configured shared Reporting folder as `Weekly AI Usage Report - YYYY-MM-DD.xlsx`, using the ChatGPT reporting end date.
+
+## Weekly and monthly usage charts
+
+Install dependencies with `python -m pip install -r requirements.txt`.
+
+Copilot reads a person-level daily Viva Insights CSV or ZIP. Specify its path
+with `--source`; the script's default is the October 21 export in Downloads.
+
+```powershell
+python usage_trends.py --source 'path/to/copilot_daily.zip'
+python usage_trends.py --source 'path/to/copilot_daily.zip' --frequency monthly
+```
+
+ChatGPT reads `users_chatgpt.csv` for creation-date enabled-user proxies and
+`input/chatgpt_weekly_metrics_with_admin_usage.csv` for weekly metrics. Monthly
+charts use the daily `input/analytics-overview-messages_*.csv` export's `Chat`
+column and `input/chatgpt_monthly_active_users.csv` for distinct active users.
+The monthly active-user file requires `Month` (`YYYY-MM`), `Period Start (UTC)`,
+`Period End (UTC)` (inclusive dates), and `Active Users (Admin, Distinct)`.
+
+```powershell
+python usage_trends_chatgpt.py
+python usage_trends_chatgpt.py --frequency monthly
+```
+
+Both scripts default to weekly charts. Monthly mode includes the latest covered
+month-to-date period and labels it MTD; add `--completed-months-only` to exclude
+it. `--as-of YYYY-MM-DD` sets an exclusive reporting cutoff. Each run writes six
+PNGs and a metrics CSV to its product/frequency output folder; `--output-dir`
+overrides the destination. ChatGPT also writes an enabled-user table.
+
+Copilot monthly active users are distinct users with actions during the month
+who remain licensed at its final covered day; actions use that same cohort.
+ChatGPT enabled users use current-export creation dates, which cannot reconstruct
+historical removals or disablements. Weekly ChatGPT boundaries use Eastern time;
+monthly boundaries use UTC to match the analytics export. ChatGPT monthly active
+counts are used directly from the supplied admin file, whose product scope is
+unspecified. Message totals use Chat only, and partial-period message totals and
+enabled snapshots use the exact active-user coverage end date.
+
+Local source exports and generated charts are excluded from Git. Run chart
+calculation tests with:
+
+```powershell
+python -m unittest test_usage_trends_copilot test_usage_trends_chatgpt -v
+```
